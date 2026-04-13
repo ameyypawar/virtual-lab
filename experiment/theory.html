@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brute Force Attack - Theory</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <header class="header">
+        <a href="../Introduction.html" class="logo">
+            <div class="logo-box">
+                <div>
+                    <div class="logo-vit">VIT</div>
+                    <div class="logo-accredited">Accredited A+ by NAAC</div>
+                </div>
+                <div class="logo-text">
+                    Vidyalankar<br>Institute of<br>Technology
+                </div>
+            </div>
+            <div class="logo-subtitle">(Autonomous College affiliated to University of Mumbai)</div>
+        </a>
+        <div class="header-title">Virtual Labs</div>
+    </header>
+
+    <div class="discipline-bar">
+        <h2>
+            <a href="../Introduction.html" style="color: #2874a6; text-decoration: none;">Computer Science and Engineering</a>
+            <span style="color: #666;"> &gt; </span>
+            <a href="../List-of-experiments.html" style="color: #2874a6; text-decoration: none;">Computer Networks Lab</a>
+            <span style="color: #666;"> &gt; </span>
+            <span style="color: #666;">Experiments</span>
+        </h2>
+    </div>
+
+    <div class="container">
+        <nav class="sidebar">
+            <a href="aim.html">Aim</a>
+            <a href="theory.html" class="active">Theory</a>
+            <a href="pretest.html">Pretest</a>
+            <a href="procedure.html">Procedure</a>
+            <a href="simulation.html">Simulation</a>
+            <a href="posttest.html">Posttest</a>
+            <a href="references.html">References</a>
+            <a href="contributors.html">Contributors</a>
+        </nav>
+
+        <main class="content">
+            <h1>Brute Force Attack on Login Page</h1>
+            <hr style="border: 1px solid #2874a6; margin-bottom: 30px;">
+
+            <h2 style="font-size: 20px; color: #333; text-decoration: underline; margin-bottom: 15px;">Theory</h2>
+
+            <h3 style="font-size: 17px; color: #2874a6; margin: 20px 0 10px;">1. What is a Brute Force Attack?</h3>
+            <p>
+                A brute force attack is a trial-and-error method used to decode login credentials, encryption keys, or hidden web pages. The attacker systematically tries all possible combinations of usernames and passwords until the correct one is found. Unlike more sophisticated attacks that exploit specific vulnerabilities, brute force relies on sheer computational power and persistence.
+            </p>
+            <p>
+                In the context of web applications, an attacker sends repeated login requests to the server, each time with a different set of credentials from a wordlist. By analyzing the server's HTTP response — specifically the status codes and response body — the attacker can determine whether a given username or password is valid.
+            </p>
+
+            <h3 style="font-size: 17px; color: #2874a6; margin: 20px 0 10px;">2. HTTP Response Status Codes</h3>
+            <p>
+                HTTP status codes are three-digit numbers returned by the server in response to a client's request. They indicate whether the request was successful, redirected, or resulted in an error. In a vulnerable application, different status codes may be returned for different authentication outcomes:
+            </p>
+            <ul>
+                <li><strong>200 OK</strong> — The request was successful. In login context, this may indicate a valid user login.</li>
+                <li><strong>210 (Custom)</strong> — Used in this experiment to indicate a successful admin login.</li>
+                <li><strong>220 (Custom)</strong> — Indicates the username is correct but the password is wrong.</li>
+                <li><strong>404 Not Found</strong> — The username does not exist in the system.</li>
+                <li><strong>406 Not Acceptable</strong> — A registered user provided an incorrect password.</li>
+            </ul>
+            <p>
+                The variation in status codes across different inputs is what makes the application vulnerable to enumeration. An attacker can determine whether a username exists simply by observing which requests return a different status code.
+            </p>
+
+            <h3 style="font-size: 17px; color: #2874a6; margin: 20px 0 10px;">3. Burp Suite and the Intruder Tool</h3>
+            <p>
+                Burp Suite is a widely used web application security testing platform. It acts as a proxy between the browser and the target server, allowing the tester to intercept, inspect, and modify HTTP requests and responses. The key components used in this experiment are:
+            </p>
+            <ul>
+                <li><strong>Proxy</strong> — Intercepts HTTP/HTTPS traffic between the browser and the server. The tester can view and modify requests before they reach the server.</li>
+                <li><strong>Intruder</strong> — Automates customized attacks by injecting payloads (e.g., username/password lists) into specific positions in an HTTP request. It supports multiple attack types including Sniper (single payload position) and Cluster Bomb (multiple positions).</li>
+                <li><strong>Repeater</strong> — Allows manual modification and resending of individual requests to observe server behavior.</li>
+            </ul>
+
+            <h3 style="font-size: 17px; color: #2874a6; margin: 20px 0 10px;">4. Attack Methodology</h3>
+            <p>The brute force attack on a login page typically follows these phases:</p>
+            <ul>
+                <li><strong>Phase 1 — Username Enumeration:</strong> The attacker uses a list of common usernames and a fixed dummy password. By sending each username to the login endpoint and observing the HTTP response codes, the attacker identifies valid usernames (e.g., a 220 response vs. 404 for invalid usernames).</li>
+                <li><strong>Phase 2 — Password Enumeration:</strong> Once a valid username is identified, the attacker fixes the username and iterates through a password wordlist. The response code that differs from the majority (e.g., 210 vs. 220) reveals the correct password.</li>
+            </ul>
+
+            <h3 style="font-size: 17px; color: #2874a6; margin: 20px 0 10px;">5. Prevention Techniques</h3>
+            <p>To protect web applications against brute force attacks, the following countermeasures should be implemented:</p>
+            <ul>
+                <li><strong>Rate Limiting</strong> — Restrict the number of login attempts from a single IP address within a given time window.</li>
+                <li><strong>Account Lockout</strong> — Temporarily lock an account after a certain number of failed login attempts.</li>
+                <li><strong>CAPTCHA</strong> — Require users to solve a challenge (e.g., reCAPTCHA) to prove they are human.</li>
+                <li><strong>Multi-Factor Authentication (MFA)</strong> — Require a second form of verification (e.g., OTP, authenticator app) in addition to the password.</li>
+                <li><strong>Uniform Error Messages</strong> — Return the same error message and status code for all failed login attempts, regardless of whether the username or password was incorrect.</li>
+                <li><strong>Web Application Firewalls (WAFs)</strong> — Deploy a WAF to detect and block automated attack patterns.</li>
+                <li><strong>Strong Password Policies</strong> — Enforce minimum password length, complexity, and prevent use of common passwords.</li>
+            </ul>
+        </main>
+    </div>
+
+    <footer class="footer">
+        &copy; 2026 Vidyalankar Institute of Technology. Computer Networks Virtual Lab.
+    </footer>
+</body>
+</html>

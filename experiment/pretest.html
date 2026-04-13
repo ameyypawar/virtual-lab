@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brute Force Attack - Pretest</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .quiz-container { max-width: 800px; }
+        .question { background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .question h3 { font-size: 15px; color: #333; margin-bottom: 12px; }
+        .question label { display: block; padding: 8px 12px; margin: 4px 0; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .question label:hover { background: #e8f4fc; }
+        .question input[type="radio"] { margin-right: 8px; }
+        .difficulty { font-size: 11px; padding: 3px 8px; border-radius: 10px; color: #fff; margin-left: 10px; }
+        .beginner { background: #27ae60; }
+        .intermediate { background: #e67e22; }
+        .advanced { background: #e74c3c; }
+        .btn-submit { background: #2874a6; color: #fff; border: none; padding: 12px 30px; border-radius: 6px; font-size: 15px; cursor: pointer; margin-top: 10px; }
+        .btn-submit:hover { background: #1a5276; }
+        .result { display: none; padding: 10px 15px; margin-top: 8px; border-radius: 4px; font-size: 14px; }
+        .correct { background: #d4edda; color: #155724; display: block; }
+        .incorrect { background: #f8d7da; color: #721c24; display: block; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../Introduction.html" class="logo">
+            <div class="logo-box">
+                <div>
+                    <div class="logo-vit">VIT</div>
+                    <div class="logo-accredited">Accredited A+ by NAAC</div>
+                </div>
+                <div class="logo-text">
+                    Vidyalankar<br>Institute of<br>Technology
+                </div>
+            </div>
+            <div class="logo-subtitle">(Autonomous College affiliated to University of Mumbai)</div>
+        </a>
+        <div class="header-title">Virtual Labs</div>
+    </header>
+
+    <div class="discipline-bar">
+        <h2>
+            <a href="../Introduction.html" style="color: #2874a6; text-decoration: none;">Computer Science and Engineering</a>
+            <span style="color: #666;"> &gt; </span>
+            <a href="../List-of-experiments.html" style="color: #2874a6; text-decoration: none;">Computer Networks Lab</a>
+            <span style="color: #666;"> &gt; </span>
+            <span style="color: #666;">Experiments</span>
+        </h2>
+    </div>
+
+    <div class="container">
+        <nav class="sidebar">
+            <a href="aim.html">Aim</a>
+            <a href="theory.html">Theory</a>
+            <a href="pretest.html" class="active">Pretest</a>
+            <a href="procedure.html">Procedure</a>
+            <a href="simulation.html">Simulation</a>
+            <a href="posttest.html">Posttest</a>
+            <a href="references.html">References</a>
+            <a href="contributors.html">Contributors</a>
+        </nav>
+
+        <main class="content">
+            <h1>Brute Force Attack on Login Page</h1>
+            <hr style="border: 1px solid #2874a6; margin-bottom: 30px;">
+
+            <div class="quiz-container" id="quiz"></div>
+            <button class="btn-submit" onclick="submitQuiz()">Submit Quiz</button>
+            <div id="score" style="margin-top: 15px; font-size: 16px; font-weight: 600;"></div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        &copy; 2026 Vidyalankar Institute of Technology. Computer Networks Virtual Lab.
+    </footer>
+
+    <script>
+        const questions = [
+            {
+                q: "What is a brute force attack?",
+                options: [
+                    "A social engineering technique to trick users into revealing passwords",
+                    "A trial-and-error method to guess login credentials by trying many combinations",
+                    "A method of encrypting passwords for secure storage",
+                    "A technique to bypass firewalls using packet fragmentation"
+                ],
+                correct: 1,
+                difficulty: "beginner",
+                explanation: "A brute force attack systematically tries all possible combinations of credentials until the correct one is found."
+            },
+            {
+                q: "What does HTTP status code 404 typically indicate?",
+                options: [
+                    "The server is overloaded",
+                    "The request was successful",
+                    "The requested resource was not found",
+                    "The user is unauthorized"
+                ],
+                correct: 2,
+                difficulty: "beginner",
+                explanation: "HTTP 404 means the server cannot find the requested resource. In login context, it can indicate a non-existent username."
+            },
+            {
+                q: "Which Burp Suite tool is used to automate brute force attacks on login forms?",
+                options: [
+                    "Scanner",
+                    "Repeater",
+                    "Decoder",
+                    "Intruder"
+                ],
+                correct: 3,
+                difficulty: "intermediate",
+                explanation: "Burp Intruder automates customized attacks by injecting payloads into specific positions in HTTP requests."
+            },
+            {
+                q: "What is username enumeration?",
+                options: [
+                    "Creating a list of all registered users from the admin panel",
+                    "Determining valid usernames by observing different server responses",
+                    "Encrypting usernames before sending them to the server",
+                    "Registering multiple accounts to test the system"
+                ],
+                correct: 1,
+                difficulty: "intermediate",
+                explanation: "Username enumeration exploits different server responses for valid vs. invalid usernames to identify existing accounts."
+            },
+            {
+                q: "Which of the following is NOT an effective countermeasure against brute force attacks?",
+                options: [
+                    "Implementing CAPTCHA on the login page",
+                    "Using different error messages for wrong username vs. wrong password",
+                    "Enforcing account lockout after failed attempts",
+                    "Implementing rate limiting on login endpoints"
+                ],
+                correct: 1,
+                difficulty: "advanced",
+                explanation: "Returning different error messages for wrong username vs. wrong password actually helps attackers enumerate valid usernames."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz');
+            questions.forEach((q, i) => {
+                let html = `<div class="question">
+                    <h3>Q${i + 1}. ${q.q} <span class="difficulty ${q.difficulty}">${q.difficulty}</span></h3>`;
+                q.options.forEach((opt, j) => {
+                    html += `<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label>`;
+                });
+                html += `<div class="result" id="result${i}"></div></div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            questions.forEach((q, i) => {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                const resultDiv = document.getElementById(`result${i}`);
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                    resultDiv.className = 'result correct';
+                    resultDiv.textContent = 'Correct! ' + q.explanation;
+                } else {
+                    resultDiv.className = 'result incorrect';
+                    resultDiv.textContent = 'Incorrect. ' + q.explanation;
+                }
+            });
+            document.getElementById('score').textContent = `Score: ${score} / ${questions.length}`;
+        }
+
+        renderQuiz();
+    </script>
+</body>
+</html>

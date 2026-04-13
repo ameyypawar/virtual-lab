@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brute Force Attack - Procedure</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .step { background: #f8f9fa; border-left: 4px solid #2874a6; padding: 15px 20px; margin-bottom: 15px; border-radius: 0 6px 6px 0; }
+        .step h3 { font-size: 16px; color: #2874a6; margin-bottom: 8px; }
+        .step p { margin-bottom: 0; }
+        .phase-title { font-size: 18px; color: #e87722; margin: 30px 0 15px; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../Introduction.html" class="logo">
+            <div class="logo-box">
+                <div>
+                    <div class="logo-vit">VIT</div>
+                    <div class="logo-accredited">Accredited A+ by NAAC</div>
+                </div>
+                <div class="logo-text">
+                    Vidyalankar<br>Institute of<br>Technology
+                </div>
+            </div>
+            <div class="logo-subtitle">(Autonomous College affiliated to University of Mumbai)</div>
+        </a>
+        <div class="header-title">Virtual Labs</div>
+    </header>
+
+    <div class="discipline-bar">
+        <h2>
+            <a href="../Introduction.html" style="color: #2874a6; text-decoration: none;">Computer Science and Engineering</a>
+            <span style="color: #666;"> &gt; </span>
+            <a href="../List-of-experiments.html" style="color: #2874a6; text-decoration: none;">Computer Networks Lab</a>
+            <span style="color: #666;"> &gt; </span>
+            <span style="color: #666;">Experiments</span>
+        </h2>
+    </div>
+
+    <div class="container">
+        <nav class="sidebar">
+            <a href="aim.html">Aim</a>
+            <a href="theory.html">Theory</a>
+            <a href="pretest.html">Pretest</a>
+            <a href="procedure.html" class="active">Procedure</a>
+            <a href="simulation.html">Simulation</a>
+            <a href="posttest.html">Posttest</a>
+            <a href="references.html">References</a>
+            <a href="contributors.html">Contributors</a>
+        </nav>
+
+        <main class="content">
+            <h1>Brute Force Attack on Login Page</h1>
+            <hr style="border: 1px solid #2874a6; margin-bottom: 30px;">
+
+            <h2 style="font-size: 20px; color: #333; text-decoration: underline; margin-bottom: 15px;">Procedure</h2>
+
+            <p><strong>Prerequisites:</strong> Python 3, Burp Suite Community Edition, a web browser.</p>
+
+            <div class="phase-title">Setup</div>
+
+            <div class="step">
+                <h3>Step 1: Start the Target Web Application</h3>
+                <p>Clone the repository and start the Flask application. The vulnerable web application (SecureBank) will be running on <code>http://127.0.0.1:5000</code>. Navigate to the home page to verify it is working.</p>
+            </div>
+
+            <div class="step">
+                <h3>Step 2: Configure Burp Suite Proxy</h3>
+                <p>Open Burp Suite and ensure the proxy listener is running on <code>127.0.0.1:8080</code>. Open the Burp Suite built-in browser (or configure your browser to use Burp as a proxy). Navigate to the login page at <code>http://127.0.0.1:5000/login</code>.</p>
+            </div>
+
+            <div class="step">
+                <h3>Step 3: Capture a Login Request</h3>
+                <p>Turn on <strong>Intercept</strong> in Burp Suite's Proxy tab. Enter any dummy credentials (e.g., <code>test</code> / <code>test</code>) in the login form and click Submit. Burp Suite captures the POST request containing <code>username=test&amp;password=test</code>.</p>
+            </div>
+
+            <div class="phase-title">Phase 1 — Username Enumeration</div>
+
+            <div class="step">
+                <h3>Step 4: Send Request to Intruder</h3>
+                <p>Right-click the captured POST request in Burp Suite and select <strong>Send to Intruder</strong>. Navigate to the Intruder tab.</p>
+            </div>
+
+            <div class="step">
+                <h3>Step 5: Configure Payload Position</h3>
+                <p>In the <strong>Positions</strong> tab, click <strong>Clear &sect;</strong> to remove all auto-marked positions. Highlight the value of the <code>username</code> parameter (e.g., <code>test</code>) and click <strong>Add &sect;</strong>. The request body should read: <code>username=&sect;test&sect;&amp;password=test</code>. Set attack type to <strong>Sniper</strong>.</p>
+            </div>
+
+            <div class="step">
+                <h3>Step 6: Load Username Wordlist</h3>
+                <p>Go to the <strong>Payloads</strong> tab. Set payload type to <strong>Simple list</strong>. Click <strong>Load</strong> and select the <code>username.txt</code> wordlist file containing common usernames.</p>
+            </div>
+
+            <div class="step">
+                <h3>Step 7: Run the Attack and Analyze</h3>
+                <p>Click <strong>Start Attack</strong>. Observe the results — most usernames return HTTP <strong>404</strong> (not found). The valid admin username returns HTTP <strong>220</strong> (incorrect password). Sort by the Status column to quickly identify the different response.</p>
+            </div>
+
+            <div class="phase-title">Phase 2 — Password Enumeration</div>
+
+            <div class="step">
+                <h3>Step 8: Reconfigure Payload Position</h3>
+                <p>Go back to the <strong>Positions</strong> tab. Click <strong>Clear &sect;</strong>. Set the username to the discovered admin username. Highlight the <code>password</code> value and click <strong>Add &sect;</strong>. The request body should read: <code>username=admin&amp;password=&sect;test&sect;</code>.</p>
+            </div>
+
+            <div class="step">
+                <h3>Step 9: Load Password Wordlist</h3>
+                <p>Go to the <strong>Payloads</strong> tab. Clear the previous payloads. Click <strong>Load</strong> and select the <code>passwd.txt</code> wordlist file containing common passwords.</p>
+            </div>
+
+            <div class="step">
+                <h3>Step 10: Run the Attack and Find the Password</h3>
+                <p>Click <strong>Start Attack</strong>. Most passwords return HTTP <strong>220</strong> (incorrect password). The correct admin password returns HTTP <strong>210</strong> (successful login). Sort by Status to identify the correct password.</p>
+            </div>
+
+            <div class="phase-title">Verification</div>
+
+            <div class="step">
+                <h3>Step 11: Login as Admin</h3>
+                <p>Navigate to the login page. Enter the discovered admin credentials. Upon successful login, you are redirected to the <strong>Admin Dashboard</strong>, confirming the brute force attack was successful.</p>
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        &copy; 2026 Vidyalankar Institute of Technology. Computer Networks Virtual Lab.
+    </footer>
+</body>
+</html>

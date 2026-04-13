@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brute Force Attack - Posttest</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .quiz-container { max-width: 800px; }
+        .question { background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .question h3 { font-size: 15px; color: #333; margin-bottom: 12px; }
+        .question label { display: block; padding: 8px 12px; margin: 4px 0; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .question label:hover { background: #e8f4fc; }
+        .question input[type="radio"] { margin-right: 8px; }
+        .difficulty { font-size: 11px; padding: 3px 8px; border-radius: 10px; color: #fff; margin-left: 10px; }
+        .beginner { background: #27ae60; }
+        .intermediate { background: #e67e22; }
+        .advanced { background: #e74c3c; }
+        .btn-submit { background: #2874a6; color: #fff; border: none; padding: 12px 30px; border-radius: 6px; font-size: 15px; cursor: pointer; margin-top: 10px; }
+        .btn-submit:hover { background: #1a5276; }
+        .result { display: none; padding: 10px 15px; margin-top: 8px; border-radius: 4px; font-size: 14px; }
+        .correct { background: #d4edda; color: #155724; display: block; }
+        .incorrect { background: #f8d7da; color: #721c24; display: block; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../Introduction.html" class="logo">
+            <div class="logo-box">
+                <div>
+                    <div class="logo-vit">VIT</div>
+                    <div class="logo-accredited">Accredited A+ by NAAC</div>
+                </div>
+                <div class="logo-text">
+                    Vidyalankar<br>Institute of<br>Technology
+                </div>
+            </div>
+            <div class="logo-subtitle">(Autonomous College affiliated to University of Mumbai)</div>
+        </a>
+        <div class="header-title">Virtual Labs</div>
+    </header>
+
+    <div class="discipline-bar">
+        <h2>
+            <a href="../Introduction.html" style="color: #2874a6; text-decoration: none;">Computer Science and Engineering</a>
+            <span style="color: #666;"> &gt; </span>
+            <a href="../List-of-experiments.html" style="color: #2874a6; text-decoration: none;">Computer Networks Lab</a>
+            <span style="color: #666;"> &gt; </span>
+            <span style="color: #666;">Experiments</span>
+        </h2>
+    </div>
+
+    <div class="container">
+        <nav class="sidebar">
+            <a href="aim.html">Aim</a>
+            <a href="theory.html">Theory</a>
+            <a href="pretest.html">Pretest</a>
+            <a href="procedure.html">Procedure</a>
+            <a href="simulation.html">Simulation</a>
+            <a href="posttest.html" class="active">Posttest</a>
+            <a href="references.html">References</a>
+            <a href="contributors.html">Contributors</a>
+        </nav>
+
+        <main class="content">
+            <h1>Brute Force Attack on Login Page</h1>
+            <hr style="border: 1px solid #2874a6; margin-bottom: 30px;">
+
+            <div class="quiz-container" id="quiz"></div>
+            <button class="btn-submit" onclick="submitQuiz()">Submit Quiz</button>
+            <div id="score" style="margin-top: 15px; font-size: 16px; font-weight: 600;"></div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        &copy; 2026 Vidyalankar Institute of Technology. Computer Networks Virtual Lab.
+    </footer>
+
+    <script>
+        const questions = [
+            {
+                q: "During the experiment, how was the valid admin username identified?",
+                options: [
+                    "By reading the application source code",
+                    "By observing a different HTTP status code (220 vs 404) in Burp Intruder results",
+                    "By guessing common admin usernames",
+                    "By checking the database directly"
+                ],
+                correct: 1,
+                difficulty: "beginner",
+                explanation: "The valid username returned HTTP 220 (wrong password) while invalid usernames returned 404 (not found), making it identifiable."
+            },
+            {
+                q: "What is the primary reason the target application was vulnerable to username enumeration?",
+                options: [
+                    "The application did not use HTTPS",
+                    "The application returned different HTTP status codes for valid and invalid usernames",
+                    "The application stored passwords in plain text",
+                    "The application had no firewall"
+                ],
+                correct: 1,
+                difficulty: "beginner",
+                explanation: "Different status codes for valid vs. invalid usernames allow attackers to determine which usernames exist in the system."
+            },
+            {
+                q: "In the Sniper attack type in Burp Intruder, how are payloads injected?",
+                options: [
+                    "All payload positions are replaced simultaneously with different values",
+                    "Payloads are injected into one position at a time while keeping other positions fixed",
+                    "Payloads are randomly distributed across all positions",
+                    "Each payload is split across multiple positions"
+                ],
+                correct: 1,
+                difficulty: "intermediate",
+                explanation: "Sniper mode iterates through a single payload list, injecting one value at a time into the marked position."
+            },
+            {
+                q: "Which of the following would have prevented the brute force attack in this experiment?",
+                options: [
+                    "Using a longer URL for the login page",
+                    "Returning the same HTTP status code and error message for all failed login attempts",
+                    "Using POST instead of GET for the login form",
+                    "Adding more fields to the login form"
+                ],
+                correct: 1,
+                difficulty: "intermediate",
+                explanation: "Uniform responses prevent attackers from distinguishing between valid and invalid usernames or passwords."
+            },
+            {
+                q: "An application returns '200 OK' for all login attempts but includes 'Invalid username' or 'Invalid password' in the response body. Is this application secure against enumeration?",
+                options: [
+                    "Yes, because the status code is the same for all responses",
+                    "No, because the response body still reveals whether the username or password was incorrect",
+                    "Yes, because 200 OK means the request was handled securely",
+                    "No, but only if the attacker can read the response headers"
+                ],
+                correct: 1,
+                difficulty: "advanced",
+                explanation: "Even with identical status codes, different response bodies can be used for enumeration. Both status codes and response content must be uniform."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz');
+            questions.forEach((q, i) => {
+                let html = `<div class="question">
+                    <h3>Q${i + 1}. ${q.q} <span class="difficulty ${q.difficulty}">${q.difficulty}</span></h3>`;
+                q.options.forEach((opt, j) => {
+                    html += `<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label>`;
+                });
+                html += `<div class="result" id="result${i}"></div></div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            questions.forEach((q, i) => {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                const resultDiv = document.getElementById(`result${i}`);
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                    resultDiv.className = 'result correct';
+                    resultDiv.textContent = 'Correct! ' + q.explanation;
+                } else {
+                    resultDiv.className = 'result incorrect';
+                    resultDiv.textContent = 'Incorrect. ' + q.explanation;
+                }
+            });
+            document.getElementById('score').textContent = `Score: ${score} / ${questions.length}`;
+        }
+
+        renderQuiz();
+    </script>
+</body>
+</html>
